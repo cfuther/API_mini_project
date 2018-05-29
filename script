@@ -1,0 +1,45 @@
+# First, import the relevant modules
+import requests
+
+#request 2017 stock 
+r_2017 = requests.get('https://www.quandl.com/api/v3/datasets/FSE/AFX_X/data.json?api_key='+API_KEY+'&start_date=2017-01-01&end_date=2017-12-31')
+#convert to dict 
+data_2017 = r_2017.json()
+
+#highest and lowest open price
+data = data_2017['dataset_data']['data']
+value_open = [date_list[1] for date_list in data if date_list[1] != None] #extract open price from list
+open_high = max(value_open)
+open_low = min(value_open)
+print(open_high)
+print(open_low)
+
+#largest change in one day
+price_change = [date_list[2]-date_list[3] for date_list in data if date_list[2] != None and date_list[3] != None]
+change_max = max(price_change)
+print(change_max)
+
+#largest change between any two days
+close_price = [date_list[4] for date_list in data if date_list[4] != None] #extract close price from list
+change_close = max(close_price) - min(close_price)
+print(change_close)
+
+#average daily trading volume
+trade_vol = [date_list[6] for date_list in data if date_list[6] != None] #extract trading volume
+ave_trade = sum(trade_vol)/len(trade_vol)
+print(ave_trade)
+
+#median trading volume
+#define median function
+def find_median(lst):
+    n = len(lst) #length of list
+    if n < 1:
+        return None
+    if n % 2 == 1:
+        return sorted(lst)[n//2]
+    if n % 2 == 0:
+        return (sorted(lst)[n//2-1]+sorted(lst)[n//2])/2.0
+    
+#median trading volume
+med_trade = find_median(trade_vol)
+print(med_trade)
